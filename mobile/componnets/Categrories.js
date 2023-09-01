@@ -1,21 +1,8 @@
 import { ScrollView, View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CategoryCard from "./CategoryCard";
-import { client } from "../service/Sanity";
 
 const Categrories = () => {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    FetchData();
-  }, []);
-
-  const FetchData = async () => {
-    client.fetch(`*[_type == "category"]`).then((data) => {
-      setProducts(data);
-    });
-  };
-  console.log(products);
   const Products = [
     {
       id: 1,
@@ -58,13 +45,6 @@ const Categrories = () => {
         marginBottom: 20,
       }}
     >
-      {/* <View>
-      ///Sanity API TEST
-        {products &&
-          products.map((product, index) => (
-            <Text key={index}>{product.title}</Text>
-          ))}
-      </View> */}
       {Products &&
         Products.map((product, index) => (
           <CategoryCard

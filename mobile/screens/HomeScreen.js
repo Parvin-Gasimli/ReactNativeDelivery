@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, Image } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useEffect, useState } from "react";
 import { useNavigation } from "expo-router";
 import {
   ChevronDownIcon,
@@ -9,6 +9,8 @@ import {
 } from "react-native-heroicons/outline";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import Categrories from "../componnets/Categrories";
+import FeaturedRow from "../componnets/FeaturedRow";
+import { client } from "../service/Sanity";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -18,6 +20,20 @@ const HomeScreen = () => {
       headerShown: false,
     });
   }, [navigation]);
+  const [featuredCategrories, setFeaturedCategrories] = useState([]);
+  useEffect(() => {
+    client
+      .fetch(
+        `*[_type == "featured"]{...,restourant[]->{
+      ...,dish[]->{ ...,}
+    }}`
+      )
+      .then((dto) => {
+        setFeaturedCategrories(dto);
+      });
+  }, []);
+  console.log(featuredCategrories);
+
   return (
     <SafeAreaView className="bg-white pt-5">
       <View className="flex-row pb-3  items-center mx-4 space-x-2  px-4">
@@ -53,6 +69,15 @@ const HomeScreen = () => {
         }}
       >
         <Categrories />
+        {featuredCategrories &&
+          featuredCategrories.map((item) => (
+            <FeaturedRow
+              key={item._id}
+              title={item.name}
+              description={"Featured"}
+              address={item.address}
+            />
+          ))}
       </ScrollView>
     </SafeAreaView>
   );
